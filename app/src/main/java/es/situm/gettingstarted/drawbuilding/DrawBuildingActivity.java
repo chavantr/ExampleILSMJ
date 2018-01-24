@@ -15,10 +15,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.Collection;
 
 import es.situm.gettingstarted.R;
+import es.situm.gettingstarted.drawpois.GetPoisUseCase;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.model.cartography.Building;
+import es.situm.sdk.model.cartography.Poi;
 import es.situm.sdk.model.location.Bounds;
 import es.situm.sdk.model.location.Coordinate;
 
@@ -30,6 +35,7 @@ public class DrawBuildingActivity
     private GoogleMap map;
     private ProgressBar progressBar;
     private GetBuildingImageUseCase getBuildingImageUseCase = new GetBuildingImageUseCase();
+    private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
 
 
     @Override
@@ -73,7 +79,7 @@ public class DrawBuildingActivity
     }
 
 
-    void drawBuilding(Building building, Bitmap bitmap){
+    void drawBuilding(Building building, Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
         Coordinate coordinateSW = drawBounds.getSouthWest();
@@ -86,6 +92,38 @@ public class DrawBuildingActivity
                 .bearing((float) building.getRotation().degrees())
                 .positionFromBounds(latLngBounds));
 
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+
+        getPois(map);
+
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 150));
+    }
+
+    private void getPois(final GoogleMap googleMap) {
+        getPoisUseCase.get(new GetPoisUseCase.Callback() {
+            @Override
+            public void onSuccess(Building building, Collection<Poi> pois) {
+                //hideProgress();
+                if (pois.isEmpty()) {
+                    Toast.makeText(DrawBuildingActivity.this, "There isnt any poi in the building: " + building.getName() + ". Go to the situm dashboard and create at least one poi before execute again this example", Toast.LENGTH_LONG).show();
+                } else {
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    for (Poi poi : pois) {
+                        LatLng latLng = new LatLng(poi.getCoordinate().getLatitude(),
+                                poi.getCoordinate().getLongitude());
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(poi.getName()));
+                        builder.include(latLng);
+                    }
+                    // googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                //hideProgress();
+                Toast.makeText(DrawBuildingActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
