@@ -10,9 +10,7 @@ import es.situm.sdk.model.cartography.Building;
 import es.situm.sdk.model.cartography.Poi;
 import es.situm.sdk.utils.Handler;
 
-/**
- * Created by alberto.penas on 10/07/17.
- */
+
 
 public class GetPoisUseCase {
 

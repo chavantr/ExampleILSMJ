@@ -35,9 +35,7 @@ import es.situm.sdk.navigation.NavigationListener;
 import es.situm.sdk.navigation.NavigationRequest;
 import es.situm.sdk.utils.Handler;
 
-/**
- * Created by alberto.penas on 10/07/17.
- */
+
 
 public class DrawRouteActivity
         extends AppCompatActivity

@@ -25,9 +25,7 @@ import es.situm.sdk.location.LocationRequest;
 import es.situm.sdk.location.LocationStatus;
 import es.situm.sdk.model.location.Location;
 
-/**
- * Created by alberto.penas on 7/07/17.
- */
+
 
 public class IndoorOutdoorActivity
         extends AppCompatActivity {

@@ -30,9 +30,7 @@ import es.situm.sdk.model.realtime.RealTimeData;
 import es.situm.sdk.realtime.RealTimeListener;
 import es.situm.sdk.realtime.RealTimeRequest;
 
-/**
- * Created by alberto.penas on 10/07/17.
- */
+
 
 public class RealTimeActivity
         extends AppCompatActivity

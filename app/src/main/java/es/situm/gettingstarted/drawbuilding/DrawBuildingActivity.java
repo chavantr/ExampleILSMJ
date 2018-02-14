@@ -25,12 +25,16 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
 import es.situm.sdk.SitumSdk;
+import es.situm.sdk.directions.DirectionsRequest;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.location.LocationListener;
 import es.situm.sdk.location.LocationManager;
@@ -38,9 +42,15 @@ import es.situm.sdk.location.LocationRequest;
 import es.situm.sdk.location.LocationStatus;
 import es.situm.sdk.model.cartography.Building;
 import es.situm.sdk.model.cartography.Poi;
+import es.situm.sdk.model.cartography.Point;
+import es.situm.sdk.model.directions.Route;
 import es.situm.sdk.model.location.Bounds;
 import es.situm.sdk.model.location.Coordinate;
 import es.situm.sdk.model.location.Location;
+import es.situm.sdk.model.navigation.NavigationProgress;
+import es.situm.sdk.navigation.NavigationListener;
+import es.situm.sdk.navigation.NavigationRequest;
+import es.situm.sdk.utils.Handler;
 
 public class DrawBuildingActivity
         extends AppCompatActivity
@@ -88,6 +98,7 @@ public class DrawBuildingActivity
         map = googleMap;
 
 
+        drawRoute();
 
         getBuildingImageUseCase.get(new GetBuildingImageUseCase.Callback() {
             @Override
@@ -101,6 +112,8 @@ public class DrawBuildingActivity
                 Toast.makeText(DrawBuildingActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+
+
     }
 
 
@@ -132,7 +145,7 @@ public class DrawBuildingActivity
         getPoisUseCase.get(new GetPoisUseCase.Callback() {
             @Override
             public void onSuccess(Building building, Collection<Poi> pois) {
-                //hideProgress();
+
                 if (pois.isEmpty()) {
                     Toast.makeText(DrawBuildingActivity.this, "There isnt any poi in the building: " + building.getName() + ". Go to the situm dashboard and create at least one poi before execute again this example", Toast.LENGTH_LONG).show();
                 } else {
@@ -145,7 +158,8 @@ public class DrawBuildingActivity
                                 .title(poi.getName()));
                         builder.include(latLng);
                     }
-                    // googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+
+
                 }
             }
 
@@ -272,7 +286,31 @@ public class DrawBuildingActivity
                 .useForegroundService(true)
                 .build();
 
-       // locationManager.requestLocationUpdates(locationRequest, locationListener);
+        locationManager.requestLocationUpdates(locationRequest, locationListener);
+    }
+
+    private void startNav(Route route) {
+        NavigationRequest navigationRequest = new NavigationRequest.Builder()
+                .route(route)
+                .distanceToGoalThreshold(3d)
+                .outsideRouteThreshold(50d)
+                .build();
+        SitumSdk.navigationManager().requestNavigationUpdates(navigationRequest, new NavigationListener() {
+            @Override
+            public void onDestinationReached() {
+                //Log.d(TAG, "onDestinationReached: ");
+            }
+
+            @Override
+            public void onProgress(NavigationProgress navigationProgress) {
+                //Log.d(TAG, "onProgress: ");
+            }
+
+            @Override
+            public void onUserOutsideRoute() {
+                // Log.d(TAG, "onUserOutsideRoute: ");
+            }
+        });
     }
 
 
@@ -282,4 +320,59 @@ public class DrawBuildingActivity
         }
         locationManager.removeUpdates(locationListener);
     }
+
+    private void drawRoute() {
+        getPoisUseCase.get(new GetPoisUseCase.Callback() {
+            @Override
+            public void onSuccess(Building building, Collection<Poi> pois) {
+                if (pois.size() < 2) {
+
+                    Toast.makeText(DrawBuildingActivity.this,
+                            "Its mandatory to have at least two pois in a building: " + building.getName() + " to start directions manager",
+                            Toast.LENGTH_LONG)
+                            .show();
+                } else {
+                    Iterator<Poi> iterator = pois.iterator();
+                    final Point from = iterator.next().getPosition();
+                    final Point to = iterator.next().getPosition();
+                    DirectionsRequest directionsRequest = new DirectionsRequest.Builder()
+                            .from(from, null)
+                            .to(to)
+                            .build();
+                    SitumSdk.directionsManager().requestDirections(directionsRequest, new Handler<Route>() {
+                        @Override
+                        public void onSuccess(Route route) {
+                            PolylineOptions polyLineOptions = new PolylineOptions().color(Color.RED).width(4f);
+                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                            List<Point> routePoints = route.getPoints();
+                            for (Point point : routePoints) {
+                                LatLng latLng = new LatLng(point.getCoordinate().getLatitude(), point.getCoordinate().getLongitude());
+                                builder.include(latLng);
+                                polyLineOptions.add(latLng);
+                            }
+                            builder.include(new LatLng(from.getCoordinate().getLatitude(), from.getCoordinate().getLongitude()));
+                            builder.include(new LatLng(to.getCoordinate().getLatitude(), to.getCoordinate().getLongitude()));
+                            map.addPolyline(polyLineOptions);
+
+                            startNav(route);
+                        }
+
+                        @Override
+                        public void onFailure(Error error) {
+                            // hideProgress();
+                            Toast.makeText(DrawBuildingActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                //hideProgress();
+                Toast.makeText(DrawBuildingActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+
 }

@@ -22,9 +22,6 @@ import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
 import es.situm.gettingstarted.realtime.RealTimeActivity;
 
-/**
- * Created by alberto.penas on 13/06/17.
- */
 
 public class SamplesActivity
         extends AppCompatActivity
