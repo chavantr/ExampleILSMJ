@@ -3,6 +3,7 @@
     package="es.situm.gettingstarted">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".GettingStartedApplication"
@@ -21,50 +22,47 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".positioning.PositioningActivity"
             android:label="Indoor positioning"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
 
-       <!-- <activity
+        <!--
+            <activity
             android:name=".drawbuilding.DrawBuildingActivity"
             android:label="Draw building"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait"></activity>-->
+            android:screenOrientation="portrait"></activity>
+        -->
 
         <activity
             android:name=".indooroutdoor.IndoorOutdoorActivity"
             android:label="Indoor-outdoor positioning"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".drawposition.DrawPositionActivity"
             android:label="Draw position"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".drawpois.DrawPoisActivity"
             android:label="Draw POIs"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".drawroute.DrawRouteActivity"
             android:label="Draw route"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".realtime.RealTimeActivity"
             android:label="Draw realtime"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
 
-        <!-- Google play services version-->
+        <!-- Google play services version -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -81,6 +79,8 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCryneT0Gkf8AVkSIYxCPaahd3dhibfBNk" />
+
+        <activity android:name=".drawbuilding.FindRouteActivity"></activity>
     </application>
 
 </manifest>

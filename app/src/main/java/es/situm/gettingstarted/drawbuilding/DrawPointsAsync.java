@@ -21,7 +21,7 @@ public class DrawPointsAsync extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+        //super.onPostExecute(s);
         onResultListener.onSuccess(s);
     }
 

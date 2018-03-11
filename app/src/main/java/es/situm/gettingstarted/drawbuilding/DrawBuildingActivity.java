@@ -1,6 +1,7 @@
 package es.situm.gettingstarted.drawbuilding;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -10,7 +11,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -26,6 +29,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -54,7 +61,7 @@ import es.situm.sdk.utils.Handler;
 
 public class DrawBuildingActivity
         extends AppCompatActivity
-        implements OnMapReadyCallback {
+        implements OnMapReadyCallback, OnResultListener {
 
 
     private GoogleMap map;
@@ -65,6 +72,8 @@ public class DrawBuildingActivity
     private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
     private LocationListener locationListener;
     private Circle circle;
+    private Button findRoute;
+    private static final int FIND_ROUTE = 779;
 
 
     @Override
@@ -72,6 +81,15 @@ public class DrawBuildingActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_building);
         setup();
+        findRoute = (Button) findViewById(R.id.btnFindRoute);
+        findRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(DrawBuildingActivity.this, FindRouteActivity.class);
+                startActivityForResult(intent, FIND_ROUTE);
+            }
+        });
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -138,7 +156,9 @@ public class DrawBuildingActivity
 
         //getPois(map);
 
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 20));
+        initPoints();
+
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 15));
     }
 
     private void getPois(final GoogleMap googleMap) {
@@ -374,5 +394,40 @@ public class DrawBuildingActivity
         });
     }
 
+    private void initPoints() {
 
+        DrawPointsAsync drawPointsAsync = new DrawPointsAsync();
+        drawPointsAsync.setOnResultListener(this, IndoorConstants.URL + IndoorConstants.GET_POINTS);
+
+    }
+
+
+    @Override
+    public void onSuccess(String result) {
+        if (!TextUtils.isEmpty(result)) {
+            try {
+                JSONArray jsonArrayPoints = new JSONArray(result);
+                if (null != jsonArrayPoints && jsonArrayPoints.length() > 0) {
+                    for (int i = 0; i < jsonArrayPoints.length(); i++) {
+                        JSONObject jPoint = jsonArrayPoints.getJSONObject(i);
+                        LatLng latLng = new LatLng(Double.parseDouble(jPoint.getString("Latitude")), Double.parseDouble(jPoint.getString("Longitude")));
+                        map.addMarker(new MarkerOptions().position(latLng)
+                                .title(jPoint.getString("Name")));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == FIND_ROUTE) {
+
+            }
+        }
+    }
 }

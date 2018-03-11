@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AISSMS</string>
+    <string name="find_route">Find Route</string>
+    <string name="enter_source_location">Enter source location</string>
+    <string name="enter_destination_location">Enter destination location</string>
 
 
 </resources>

@@ -13,14 +13,16 @@ import java.net.URL;
  * Created by Tatyabhau on 3/10/2018.
  */
 
-public class HttpConnectionUtil {
-    public String requestGet(String url) {
+ class HttpConnectionUtil {
+
+     String requestGet(String url) {
         try {
             URL uri = new URL(url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) uri.openConnection();
             httpURLConnection.setRequestProperty("Content-Type", "application/json");
             httpURLConnection.setRequestProperty("Accept", "application/json");
             httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.connect();
             int responseCode = httpURLConnection.getResponseCode();
             if (responseCode == 200) {
                 InputStream inputStream = new BufferedInputStream(httpURLConnection.getInputStream());
