@@ -98,7 +98,7 @@ public class DrawBuildingActivity
         map = googleMap;
 
 
-        drawRoute();
+        //drawRoute();
 
         getBuildingImageUseCase.get(new GetBuildingImageUseCase.Callback() {
             @Override
@@ -136,7 +136,7 @@ public class DrawBuildingActivity
                 .positionFromBounds(latLngBounds));
 
 
-        getPois(map);
+        //getPois(map);
 
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 20));
     }

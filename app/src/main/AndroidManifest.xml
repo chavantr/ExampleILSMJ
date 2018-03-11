@@ -73,7 +73,6 @@
         <meta-data
             android:name="es.situm.sdk.API_USER"
             android:value="tatyabhau.chavan@gmail.com" />
-
         <meta-data
             android:name="es.situm.sdk.API_KEY"
             android:value="30b0549892d1ee12743ceba40cc0c9b29b04881ff867df0d9f8cf7f87cb68ebf" />
@@ -81,8 +80,7 @@
         <!-- GMaps api key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyClCN7T0VPX7MIoOJEMA3W9JLXhV_S7yx4" />
-
+            android:value="AIzaSyCryneT0Gkf8AVkSIYxCPaahd3dhibfBNk" />
     </application>
 
 </manifest>
