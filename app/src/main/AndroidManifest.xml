@@ -3,7 +3,21 @@
     package="es.situm.gettingstarted">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
+
+
+    <uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:required="true" />
+
 
     <application
         android:name=".GettingStartedApplication"
@@ -37,6 +51,11 @@
         -->
 
         <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.HomeActivity"
+            android:label="@string/app_name"></activity>
+
+
+        <activity
             android:name=".indooroutdoor.IndoorOutdoorActivity"
             android:label="Indoor-outdoor positioning"
             android:parentActivityName=".SamplesActivity"
@@ -68,12 +87,28 @@
             android:value="@integer/google_play_services_version" />
 
         <!-- Situm SDK credentials -->
+
+<!-- moze
+        <meta-data
+            android:name="es.situm.sdk.API_USER"
+            android:value="questionset.distribution@gmail.com" />
+
+
+        <meta-data
+            android:name="es.situm.sdk.API_KEY"
+            android:value="ec4a6e7bb1ae189504307922b1eb35e742c4748b293ad53bf79d9dabc7077b01" />
+-->
+
+
         <meta-data
             android:name="es.situm.sdk.API_USER"
             android:value="tatyabhau.chavan@gmail.com" />
+
+
         <meta-data
             android:name="es.situm.sdk.API_KEY"
-            android:value="30b0549892d1ee12743ceba40cc0c9b29b04881ff867df0d9f8cf7f87cb68ebf" />
+            android:value="ec4a6e7bb1ae189504307922b1eb35e742c4748b293ad53bf79d9dabc7077b01" />
+
 
         <!-- GMaps api key -->
         <meta-data
@@ -81,6 +116,33 @@
             android:value="AIzaSyCryneT0Gkf8AVkSIYxCPaahd3dhibfBNk" />
 
         <activity android:name=".drawbuilding.FindRouteActivity"></activity>
+
+
+        <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.NewProjectActivity"
+            android:label="@string/new_project" />
+        <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.ProjectDetailActivity"
+            android:label="@string/project_detail" />
+        <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.AddOrEditAccessPointActivity"
+            android:label="@string/add_access_point" />
+        <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.SearchWifiAccessPointActivity"
+            android:label="@string/add_access_point" />
+        <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.AddOrEditReferencePointActivity"
+            android:label="@string/add_reference_point" />
+        <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.LocateMeActivity"
+            android:label="@string/locate_me" />
+        <activity
+            android:name="es.situm.gettingstarted.wifiindoorpositioning.ui.UnifiedNavigationActivity"
+            android:label="Settings" />
+
+        <service android:name="es.situm.gettingstarted.wifiindoorpositioning.core.WifiService" />
+
+
     </application>
 
 </manifest>

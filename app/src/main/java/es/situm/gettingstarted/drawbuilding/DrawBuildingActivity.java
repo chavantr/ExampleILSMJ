@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -40,6 +42,8 @@ import java.util.List;
 
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
+import es.situm.gettingstarted.wifiindoorpositioning.ui.HomeActivity;
+import es.situm.gettingstarted.wifiindoorpositioning.ui.NewProjectActivity;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.directions.DirectionsRequest;
 import es.situm.sdk.error.Error;
@@ -58,6 +62,7 @@ import es.situm.sdk.model.navigation.NavigationProgress;
 import es.situm.sdk.navigation.NavigationListener;
 import es.situm.sdk.navigation.NavigationRequest;
 import es.situm.sdk.utils.Handler;
+import es.situm.gettingstarted.wifiindoorpositioning.ui.ProjectDetailActivity;
 
 public class DrawBuildingActivity
         extends AppCompatActivity
@@ -191,6 +196,30 @@ public class DrawBuildingActivity
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.setting) {
+            Intent intent = new Intent(DrawBuildingActivity.this, HomeActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setup(int i) {
         locationManager = SitumSdk.locationManager();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -202,19 +231,15 @@ public class DrawBuildingActivity
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
+
             if (ActivityCompat.shouldShowRequestPermissionRationale(DrawBuildingActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+
                 showPermissionsNeeded();
             } else {
-                // No explanation needed, we can request the permission.
+
                 requestPermission();
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+
             }
         } else {
             startLocation();
@@ -424,6 +449,11 @@ public class DrawBuildingActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+        //map.addPolyline(new PolylineOptions().add(new LatLng(18.574423, 73.768086), new LatLng(18.573948, 73.768092)).color(Color.RED).width(4));
+
+
         if (resultCode == RESULT_OK) {
             if (requestCode == FIND_ROUTE) {
 

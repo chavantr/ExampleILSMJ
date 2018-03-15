@@ -1,15 +1,11 @@
 package es.situm.gettingstarted.drawbuilding;
 
-import java.io.Serializable;
 
-
-
-public class Route implements Serializable {
+public class RouteTran {
 
     private int id;
     private String latitude;
     private String longitude;
-    private int routeId;
 
     public int getId() {
         return id;
@@ -34,12 +30,5 @@ public class Route implements Serializable {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
-
-    public int getRouteId() {
-        return routeId;
-    }
-
-    public void setRouteId(int routeId) {
-        this.routeId = routeId;
-    }
+    
 }
