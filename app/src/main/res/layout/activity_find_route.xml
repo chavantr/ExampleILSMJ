@@ -7,30 +7,59 @@
     tools:context="es.situm.gettingstarted.drawbuilding.FindRouteActivity">
 
 
-    <EditText
-        android:id="@+id/txtSourceLocation"
+    <Spinner
+        android:id="@+id/spnStartLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:hint="@string/enter_source_location"
+        android:padding="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"></Spinner>
 
 
-    <EditText
-        android:id="@+id/txtDestLocation"
+    <Spinner
+        android:id="@+id/spnDestLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:hint="@string/enter_destination_location"
+        android:padding="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtSourceLocation" />
+        app:layout_constraintTop_toBottomOf="@id/spnStartLocation"></Spinner>
+
+
+    <!--
+
+        <EditText
+            android:id="@+id/txtSourceLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:hint="@string/enter_source_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <EditText
+            android:id="@+id/txtDestLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:hint="@string/enter_destination_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtSourceLocation" />
+    -->
 
 
     <Button
@@ -43,7 +72,7 @@
         android:text="@string/find_route"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtDestLocation" />
+        app:layout_constraintTop_toBottomOf="@id/spnDestLocation" />
 
 
 </android.support.constraint.ConstraintLayout>

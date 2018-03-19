@@ -3,13 +3,15 @@ package es.situm.gettingstarted.drawbuilding;
 import java.io.Serializable;
 
 
-
 public class Route implements Serializable {
 
     private int id;
-    private String latitude;
-    private String longitude;
+    private String sLatitude;
+    private String sLongitude;
+    private String dLatitude;
+    private String dLongitude;
     private int routeId;
+
 
     public int getId() {
         return id;
@@ -19,20 +21,36 @@ public class Route implements Serializable {
         this.id = id;
     }
 
-    public String getLatitude() {
-        return latitude;
+    public String getsLatitude() {
+        return sLatitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
+    public void setsLatitude(String sLatitude) {
+        this.sLatitude = sLatitude;
     }
 
-    public String getLongitude() {
-        return longitude;
+    public String getsLongitude() {
+        return sLongitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
+    public void setsLongitude(String sLongitude) {
+        this.sLongitude = sLongitude;
+    }
+
+    public String getdLatitude() {
+        return dLatitude;
+    }
+
+    public void setdLatitude(String dLatitude) {
+        this.dLatitude = dLatitude;
+    }
+
+    public String getdLongitude() {
+        return dLongitude;
+    }
+
+    public void setdLongitude(String dLongitude) {
+        this.dLongitude = dLongitude;
     }
 
     public int getRouteId() {
@@ -42,4 +60,6 @@ public class Route implements Serializable {
     public void setRouteId(int routeId) {
         this.routeId = routeId;
     }
+
+
 }

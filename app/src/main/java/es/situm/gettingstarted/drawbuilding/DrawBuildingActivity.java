@@ -36,10 +36,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import es.situm.gettingstarted.GettingStartedApplication;
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
 import es.situm.gettingstarted.wifiindoorpositioning.ui.HomeActivity;
@@ -449,14 +451,33 @@ public class DrawBuildingActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-
-        //map.addPolyline(new PolylineOptions().add(new LatLng(18.574423, 73.768086), new LatLng(18.573948, 73.768092)).color(Color.RED).width(4));
-
-
         if (resultCode == RESULT_OK) {
             if (requestCode == FIND_ROUTE) {
-
+                GettingStartedApplication gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
+                if (null != gettingStartedApplication && gettingStartedApplication.getRouteResponse() != null) {
+                    List<LatLng> route = new ArrayList<>();
+                    if (null != gettingStartedApplication.getRouteResponse().getRoute()) {
+                        route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude())));
+                        LatLng latLng = new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude()));
+                        if (circle == null) {
+                            circle = map.addCircle(new CircleOptions()
+                                    .center(latLng)
+                                    .radius(1d)
+                                    .strokeWidth(0f)
+                                    .fillColor(Color.CYAN));
+                        } else {
+                            circle.setCenter(latLng);
+                        }
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25));
+                        if (null != gettingStartedApplication.getRouteResponse().getRouteTrans() && gettingStartedApplication.getRouteResponse().getRouteTrans().size() > 0) {
+                            for (int i = 0; i < gettingStartedApplication.getRouteResponse().getRouteTrans().size(); i++) {
+                                route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRouteTrans().get(i).getLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRouteTrans().get(i).getLongitude())));
+                            }
+                        }
+                        route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLongitude())));
+                        map.addPolyline(new PolylineOptions().addAll(route).color(Color.BLUE).width(7));
+                    }
+                }
             }
         }
     }
