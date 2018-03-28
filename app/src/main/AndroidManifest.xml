@@ -89,19 +89,19 @@
         <!-- Situm SDK credentials -->
 
 
-        <meta-data
+        <!--<meta-data
             android:name="es.situm.sdk.API_USER"
             android:value="questionset.distribution@gmail.com" />
 
 
         <meta-data
             android:name="es.situm.sdk.API_KEY"
-            android:value="ec4a6e7bb1ae189504307922b1eb35e742c4748b293ad53bf79d9dabc7077b01" />
+            android:value="ec4a6e7bb1ae189504307922b1eb35e742c4748b293ad53bf79d9dabc7077b01" />-->
 
 
         <!-- aissms-->
 
-        <!--
+
                 <meta-data
                     android:name="es.situm.sdk.API_USER"
                     android:value="tatyabhau.chavan@gmail.com" />
@@ -109,8 +109,8 @@
 
                 <meta-data
                     android:name="es.situm.sdk.API_KEY"
-                    android:value="ec4a6e7bb1ae189504307922b1eb35e742c4748b293ad53bf79d9dabc7077b01" />
-        -->
+                    android:value="30b0549892d1ee12743ceba40cc0c9b29b04881ff867df0d9f8cf7f87cb68ebf" />
+
 
 
         <!-- GMaps api key -->

@@ -19,7 +19,7 @@ import java.util.List;
 import es.situm.gettingstarted.GettingStartedApplication;
 import es.situm.gettingstarted.R;
 
-public class FindRouteActivity extends AppCompatActivity implements OnResultListener {
+public class FindRouteActivity extends AppCompatActivity implements OnResultListener, OnPointsListener {
 
     public static final String ROUTE = "Route";
     public static final String ID = "Id";
@@ -50,10 +50,10 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
 
         gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
 
-        lstSource = new ArrayList<>();
+        /*lstSource = new ArrayList<>();
         lstDesti = new ArrayList<>();
         lstSource.add("HODCabin");
-        lstDesti.add("Staffroom");
+        lstDesti.add("Staffroom");*/
 
         findRoute.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +70,10 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
         spnSourceLocation = (Spinner) findViewById(R.id.spnStartLocation);
         spnDestinationLocation = (Spinner) findViewById(R.id.spnDestLocation);
 
-        ArrayAdapter<String> adapterSource = new ArrayAdapter<String>(this,
+        GetRoutePointsAsync getRoutePointsAsync = new GetRoutePointsAsync();
+        getRoutePointsAsync.setOnResultListener(this,IndoorConstants.URL+IndoorConstants.GET_ROUTE_POINTS);
+
+        /*ArrayAdapter<String> adapterSource = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, lstSource);
 
         ArrayAdapter<String> adapterDest = new ArrayAdapter<String>(this,
@@ -78,7 +81,7 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
 
         spnSourceLocation.setAdapter(adapterSource);
 
-        spnDestinationLocation.setAdapter(adapterDest);
+        spnDestinationLocation.setAdapter(adapterDest);*/
 
     }
 
@@ -133,5 +136,46 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
     private void initFindRoute() {
         FindRouteAsync findRouteAsync = new FindRouteAsync();
         findRouteAsync.setOnResultListener(this, "source=" + spnSourceLocation.getSelectedItem().toString() + "&desti=" + spnDestinationLocation.getSelectedItem().toString());
+    }
+
+    @Override
+    public void onSuccessPoint(String result) {
+
+        if (!TextUtils.isEmpty(result)) {
+            try {
+                JSONObject jPoints = new JSONObject(result);
+                JSONArray source = jPoints.getJSONArray("Source");
+                JSONArray destination = jPoints.getJSONArray("Destination");
+                if (null != source && source.length() > 0) {
+                    lstSource = new ArrayList<>();
+                    for (int i = 0; i < source.length(); i++) {
+                        lstSource.add(source.getString(i));
+                    }
+                }
+                if (null != destination && destination.length() > 0) {
+                    lstDesti = new ArrayList<>();
+                    for (int i = 0; i < destination.length(); i++) {
+                        lstDesti.add(destination.getString(i));
+                    }
+                }
+
+                ArrayAdapter<String> adapterSource = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_spinner_item, lstSource);
+
+                ArrayAdapter<String> adapterDest = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_spinner_item, lstDesti);
+
+                spnSourceLocation.setAdapter(adapterSource);
+
+                spnDestinationLocation.setAdapter(adapterDest);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
     }
 }
