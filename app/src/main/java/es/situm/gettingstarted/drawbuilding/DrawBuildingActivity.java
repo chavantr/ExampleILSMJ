@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
@@ -81,7 +82,7 @@ public class DrawBuildingActivity
     private Circle circle;
     private Button findRoute;
     private static final int FIND_ROUTE = 779;
-
+    private Polyline polyLine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -456,6 +457,12 @@ public class DrawBuildingActivity
                 GettingStartedApplication gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
                 if (null != gettingStartedApplication && gettingStartedApplication.getRouteResponse() != null) {
                     List<LatLng> route = new ArrayList<>();
+
+                    if (null != polyLine) {
+                        polyLine.remove();
+                    }
+
+
                     if (null != gettingStartedApplication.getRouteResponse().getRoute()) {
                         route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude())));
                         LatLng latLng = new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude()));
@@ -475,7 +482,7 @@ public class DrawBuildingActivity
                             }
                         }
                         route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLongitude())));
-                        map.addPolyline(new PolylineOptions().addAll(route).color(Color.BLUE).width(7));
+                        polyLine = map.addPolyline(new PolylineOptions().addAll(route).color(Color.BLUE).width(7));
                     }
                 }
             }
