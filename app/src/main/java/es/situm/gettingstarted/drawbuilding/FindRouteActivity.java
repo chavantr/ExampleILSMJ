@@ -71,7 +71,7 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
         spnDestinationLocation = (Spinner) findViewById(R.id.spnDestLocation);
 
         GetRoutePointsAsync getRoutePointsAsync = new GetRoutePointsAsync();
-        getRoutePointsAsync.setOnResultListener(this,IndoorConstants.URL+IndoorConstants.GET_ROUTE_POINTS);
+        getRoutePointsAsync.setOnResultListener(this, IndoorConstants.URL + IndoorConstants.GET_ROUTE_POINTS);
 
         /*ArrayAdapter<String> adapterSource = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, lstSource);
@@ -149,13 +149,15 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
                 if (null != source && source.length() > 0) {
                     lstSource = new ArrayList<>();
                     for (int i = 0; i < source.length(); i++) {
-                        lstSource.add(source.getString(i));
+                        if (!lstSource.contains(source.getString(i)))
+                            lstSource.add(source.getString(i));
                     }
                 }
                 if (null != destination && destination.length() > 0) {
                     lstDesti = new ArrayList<>();
                     for (int i = 0; i < destination.length(); i++) {
-                        lstDesti.add(destination.getString(i));
+                        if (!lstDesti.contains(destination.getString(i)))
+                            lstDesti.add(destination.getString(i));
                     }
                 }
 

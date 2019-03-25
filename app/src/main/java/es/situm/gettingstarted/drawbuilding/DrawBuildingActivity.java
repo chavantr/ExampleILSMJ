@@ -1,10 +1,12 @@
 package es.situm.gettingstarted.drawbuilding;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -46,7 +48,6 @@ import es.situm.gettingstarted.GettingStartedApplication;
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
 import es.situm.gettingstarted.wifiindoorpositioning.ui.HomeActivity;
-import es.situm.gettingstarted.wifiindoorpositioning.ui.NewProjectActivity;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.directions.DirectionsRequest;
 import es.situm.sdk.error.Error;
@@ -65,7 +66,6 @@ import es.situm.sdk.model.navigation.NavigationProgress;
 import es.situm.sdk.navigation.NavigationListener;
 import es.situm.sdk.navigation.NavigationRequest;
 import es.situm.sdk.utils.Handler;
-import es.situm.gettingstarted.wifiindoorpositioning.ui.ProjectDetailActivity;
 
 public class DrawBuildingActivity
         extends AppCompatActivity
@@ -103,6 +103,116 @@ public class DrawBuildingActivity
         mapFragment.getMapAsync(this);
         setup(0);
 
+
+// The minimum time (in miliseconds) the system will wait until checking if the location changed
+        int minTime = 60000;
+// The minimum distance (in meters) traveled until you will be notified
+        float minDistance = 15;
+// Create a new instance of the location listener
+        MyLocationListener myLocListener = new MyLocationListener();
+// Get the location manager from the system
+        android.location.LocationManager locationManagerL = (android.location.LocationManager) getSystemService(Context.LOCATION_SERVICE);
+// Get the criteria you would like to use
+        Criteria criteria = new Criteria();
+        criteria.setPowerRequirement(Criteria.POWER_HIGH);
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setAltitudeRequired(true);
+        criteria.setBearingRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setSpeedRequired(true);
+// Get the best provider from the criteria specified, and false to say it can turn the provider on if it isn't already
+        String bestProvider = locationManagerL.getBestProvider(criteria, false);
+// Request location updates
+        //locationManagerL.requestLocationUpdates(bestProvider, minTime, minDistance, myLocListener);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManagerL.requestLocationUpdates(bestProvider, 0, 0, myLocListener);
+
+    }
+
+    //private android.location.Location lastLocation;
+    private Location lastLocation;
+
+    private class MyLocationListener implements android.location.LocationListener {
+
+
+        @Override
+        public void onLocationChanged(android.location.Location location) {
+
+
+            /*Toast.makeText(DrawBuildingActivity.this, "changed", Toast.LENGTH_SHORT).show();
+
+
+            if (null == lastLocation) {
+                lastLocation = location;
+            }
+
+
+            //if (null != lastLocation && location != null && lastLocation.getLatitude() != location.getLatitude() || lastLocation.getLongitude() != location.getLongitude()) {
+
+                counter = counter + 1;
+
+                if (counter < 5) {
+
+                    Toast.makeText(DrawBuildingActivity.this, "new changed", Toast.LENGTH_SHORT).show();
+
+                    position = position + 1;
+
+                   // if (null != routeLatLnt && position < routeLatLnt.size()) {
+
+                        if (null != circle) {
+                            circle.remove();
+                        }
+
+
+                        circle = map.addCircle(new CircleOptions()
+                                .center(routeLatLnt.get(position))
+                                .radius(2d)
+                                .strokeWidth(2f)
+                                .fillColor(Color.RED));
+
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(routeLatLnt.get(position), 25));
+
+                        counter = 0;
+
+
+                    //}
+
+
+              //  }
+
+
+                lastLocation = location;
+*/
+
+            //          }
+
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
     }
 
 
@@ -218,6 +328,14 @@ public class DrawBuildingActivity
             Intent intent = new Intent(DrawBuildingActivity.this, HomeActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.teacher) {
+            Intent intent = new Intent(DrawBuildingActivity.this, LoginActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.view_teacher) {
+            Intent intent = new Intent(DrawBuildingActivity.this, ShowTeacherActivity.class);
+            startActivity(intent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -303,18 +421,66 @@ public class DrawBuildingActivity
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 progressBar.setVisibility(View.GONE);
-                LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                LatLng latLng1 = new LatLng(location.getCoordinate().getLatitude(),
                         location.getCoordinate().getLongitude());
-                if (circle == null) {
-                    circle = map.addCircle(new CircleOptions()
-                            .center(latLng)
-                            .radius(1d)
-                            .strokeWidth(0f)
-                            .fillColor(Color.BLUE));
-                } else {
-                    circle.setCenter(latLng);
+
+                if (null != routeLatLnt && position > routeLatLnt.size() - 1) {
+                    position = 0;
                 }
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
+
+
+                if (null == lastLocation) {
+                    lastLocation = location;
+                }
+
+
+                if (counter == 23) {
+                    if (null != circle) {
+                        circle.remove();
+                    }
+                }
+
+
+                counter = counter + 1;
+
+                if (counter < 25) {
+
+
+                    if (null != routeLatLnt && position <= routeLatLnt.size()) {
+
+
+                        if (counter >= 24) {
+
+                            position = position + 1;
+
+                            if (position >= routeLatLnt.size()) {
+                                position = 0;
+                            }
+
+                            if (null != routeLatLnt && !routeLatLnt.isEmpty()) {
+
+                                latLng1 = new LatLng(routeLatLnt.get(position).latitude, routeLatLnt.get(position).longitude);
+                            } else {
+                                latLng1 = new LatLng(location.getCoordinate().getLatitude(),
+                                        location.getCoordinate().getLongitude());
+                            }
+
+                            circle = map.addCircle(new CircleOptions()
+                                    .center(latLng1)
+                                    .radius(1d)
+                                    .strokeWidth(1f)
+                                    .zIndex(1.0f)
+                                    .fillColor(Color.RED));
+
+
+                            counter = 0;
+                        }
+                    }
+                }
+
+
+                lastLocation = location;
+
             }
 
             @Override
@@ -454,6 +620,13 @@ public class DrawBuildingActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == FIND_ROUTE) {
+
+                counter = 0;
+
+
+                position = 0;
+
+
                 GettingStartedApplication gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
                 if (null != gettingStartedApplication && gettingStartedApplication.getRouteResponse() != null) {
                     List<LatLng> route = new ArrayList<>();
@@ -466,15 +639,24 @@ public class DrawBuildingActivity
                     if (null != gettingStartedApplication.getRouteResponse().getRoute()) {
                         route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude())));
                         LatLng latLng = new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude()));
-                        if (circle == null) {
-                            circle = map.addCircle(new CircleOptions()
-                                    .center(latLng)
-                                    .radius(1d)
-                                    .strokeWidth(0f)
-                                    .fillColor(Color.CYAN));
-                        } else {
-                            circle.setCenter(latLng);
+                        // if (circle == null) {
+
+                        if (null != circle) {
+                            circle.remove();
                         }
+
+                        circle = map.addCircle(new CircleOptions()
+                                .center(latLng)
+                                .radius(1d)
+                                .strokeWidth(1f)
+                                .zIndex(1.0f)
+                                .fillColor(Color.RED));
+                        // } else {
+                        //    circle.setCenter(latLng);
+                        // }
+
+                        //startLocation();
+
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25));
                         if (null != gettingStartedApplication.getRouteResponse().getRouteTrans() && gettingStartedApplication.getRouteResponse().getRouteTrans().size() > 0) {
                             for (int i = 0; i < gettingStartedApplication.getRouteResponse().getRouteTrans().size(); i++) {
@@ -483,9 +665,15 @@ public class DrawBuildingActivity
                         }
                         route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLongitude())));
                         polyLine = map.addPolyline(new PolylineOptions().addAll(route).color(Color.BLUE).width(7));
+
+                        routeLatLnt = route;
                     }
                 }
             }
         }
     }
+
+    private int position;
+    private int counter;
+    private List<LatLng> routeLatLnt;
 }

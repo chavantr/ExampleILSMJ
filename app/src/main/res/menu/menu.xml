@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/setting" android:visible="true" android:title="@string/wifi_points" />
+    <item
+        android:id="@+id/setting"
+        android:title="@string/wifi_points"
+        android:visible="true" />
+
+    <item
+        android:id="@+id/teacher"
+        android:title="Teacher login"
+        android:visible="true" />
+
+    <item
+        android:id="@+id/view_teacher"
+        android:title="Teachers"
+        android:visible="true" />
 
 </menu>
