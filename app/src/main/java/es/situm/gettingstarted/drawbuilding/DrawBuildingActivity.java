@@ -142,69 +142,18 @@ public class DrawBuildingActivity
 
     }
 
-    //private android.location.Location lastLocation;
+
     private Location lastLocation;
 
     private class MyLocationListener implements android.location.LocationListener {
 
-
         @Override
         public void onLocationChanged(android.location.Location location) {
-
-
-            /*Toast.makeText(DrawBuildingActivity.this, "changed", Toast.LENGTH_SHORT).show();
-
-
-            if (null == lastLocation) {
-                lastLocation = location;
-            }
-
-
-            //if (null != lastLocation && location != null && lastLocation.getLatitude() != location.getLatitude() || lastLocation.getLongitude() != location.getLongitude()) {
-
-                counter = counter + 1;
-
-                if (counter < 5) {
-
-                    Toast.makeText(DrawBuildingActivity.this, "new changed", Toast.LENGTH_SHORT).show();
-
-                    position = position + 1;
-
-                   // if (null != routeLatLnt && position < routeLatLnt.size()) {
-
-                        if (null != circle) {
-                            circle.remove();
-                        }
-
-
-                        circle = map.addCircle(new CircleOptions()
-                                .center(routeLatLnt.get(position))
-                                .radius(2d)
-                                .strokeWidth(2f)
-                                .fillColor(Color.RED));
-
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(routeLatLnt.get(position), 25));
-
-                        counter = 0;
-
-
-                    //}
-
-
-              //  }
-
-
-                lastLocation = location;
-*/
-
-            //          }
-
 
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
 
         }
 
@@ -217,6 +166,7 @@ public class DrawBuildingActivity
         public void onProviderDisabled(String provider) {
 
         }
+
     }
 
 
@@ -233,12 +183,9 @@ public class DrawBuildingActivity
         checkPermissions();
 
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         map = googleMap;
-
-
-        //drawRoute();
 
         getBuildingImageUseCase.get(new GetBuildingImageUseCase.Callback() {
             @Override
@@ -275,9 +222,6 @@ public class DrawBuildingActivity
                 .bearing((float) building.getRotation().degrees())
                 .positionFromBounds(latLngBounds));
 
-
-        //getPois(map);
-
         initPoints();
 
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 15));
@@ -307,7 +251,6 @@ public class DrawBuildingActivity
 
             @Override
             public void onError(String error) {
-                //hideProgress();
                 Toast.makeText(DrawBuildingActivity.this, error, Toast.LENGTH_LONG).show();
             }
         });
@@ -315,7 +258,7 @@ public class DrawBuildingActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }

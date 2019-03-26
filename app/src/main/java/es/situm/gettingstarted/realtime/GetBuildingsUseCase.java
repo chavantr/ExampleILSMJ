@@ -13,9 +13,7 @@ import es.situm.sdk.model.cartography.Building;
 import es.situm.sdk.model.cartography.Floor;
 import es.situm.sdk.utils.Handler;
 
-/**
- * Created by alberto.penas on 13/06/17.
- */
+
 
 class GetBuildingsUseCase {
 
