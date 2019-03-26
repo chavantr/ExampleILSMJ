@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import es.situm.gettingstarted.R;
 import es.situm.sdk.SitumSdk;
@@ -32,9 +31,7 @@ import es.situm.sdk.realtime.RealTimeRequest;
 
 
 
-public class RealTimeActivity
-        extends AppCompatActivity
-        implements OnMapReadyCallback {
+public class RealTimeActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GetBuildingsUseCase getBuildingsUseCase = new GetBuildingsUseCase();
     private GoogleMap googleMap;
@@ -66,7 +63,7 @@ public class RealTimeActivity
             @Override
             public void onSuccess(List<Building> buildings) {
                 hideProgress();
-                Building building = buildings.get(2);
+                Building building = buildings.get(0);
                 realtime(building);
             }
 

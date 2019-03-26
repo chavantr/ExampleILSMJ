@@ -14,23 +14,29 @@ public class LoginAsync extends AsyncTask<JSONObject, Void, Teacher> {
         String response = new HttpConnectionUtil().requestPost(IndoorConstants.URL + IndoorConstants.LOGIN, params[0]);
         if (response.isEmpty()) return null;
         else {
-            Teacher teacher = new Teacher();
+
             JSONObject jNode = null;
             try {
                 jNode = new JSONObject(response);
-                teacher.setId(jNode.getInt("Id"));
-                teacher.setName(jNode.getString("Name"));
-                teacher.setUserName(jNode.getString("Username"));
-                teacher.setPassword(jNode.getString("Password"));
-                teacher.setQualification(jNode.getString("Qualification"));
-                teacher.setDesignation(jNode.getString("Designation"));
-                teacher.setLat(jNode.getString("Lat"));
-                teacher.setLng(jNode.getString("Lng"));
+                if (null != jNode) {
+                    Teacher teacher = new Teacher();
+                    teacher.setId(jNode.getInt("Id"));
+                    teacher.setName(jNode.getString("Name"));
+                    teacher.setUserName(jNode.getString("Username"));
+                    teacher.setPassword(jNode.getString("Password"));
+                    teacher.setQualification(jNode.getString("Qualification"));
+                    teacher.setDesignation(jNode.getString("Designation"));
+                    teacher.setLat(jNode.getString("Lat"));
+                    teacher.setLng(jNode.getString("Lng"));
+                    return teacher;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return teacher;
+
         }
+
+        return null;
     }
 
     @Override

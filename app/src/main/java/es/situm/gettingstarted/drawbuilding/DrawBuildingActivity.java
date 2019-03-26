@@ -46,7 +46,9 @@ import java.util.List;
 
 import es.situm.gettingstarted.GettingStartedApplication;
 import es.situm.gettingstarted.R;
+import es.situm.gettingstarted.drawbuilding.models.UserInfoHolder;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
+import es.situm.gettingstarted.realtime.RealTimeActivity;
 import es.situm.gettingstarted.wifiindoorpositioning.ui.HomeActivity;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.directions.DirectionsRequest;
@@ -80,8 +82,10 @@ public class DrawBuildingActivity
     private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
     private LocationListener locationListener;
     private Circle circle;
+    private Circle circleTLocation;
     private Button findRoute;
     private static final int FIND_ROUTE = 779;
+    private static final int TEACHER_LOGIN = 799;
     private Polyline polyLine;
 
     @Override
@@ -330,10 +334,14 @@ public class DrawBuildingActivity
             return true;
         } else if (id == R.id.teacher) {
             Intent intent = new Intent(DrawBuildingActivity.this, LoginActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, TEACHER_LOGIN);
             return true;
         } else if (id == R.id.view_teacher) {
             Intent intent = new Intent(DrawBuildingActivity.this, ShowTeacherActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.view_path) {
+            Intent intent = new Intent(DrawBuildingActivity.this, RealTimeActivity.class);
             startActivity(intent);
             return true;
         }
@@ -346,21 +354,15 @@ public class DrawBuildingActivity
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
-
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(DrawBuildingActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-
-
             if (ActivityCompat.shouldShowRequestPermissionRationale(DrawBuildingActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
                 showPermissionsNeeded();
             } else {
-
                 requestPermission();
-
             }
         } else {
             startLocation();
@@ -615,6 +617,7 @@ public class DrawBuildingActivity
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -669,6 +672,19 @@ public class DrawBuildingActivity
                         routeLatLnt = route;
                     }
                 }
+            } else if (requestCode == TEACHER_LOGIN) {
+
+                if (null != circleTLocation) {
+                    circleTLocation.remove();
+                }
+                LatLng latLngT = new LatLng(Double.parseDouble(UserInfoHolder.getInstance().getTeacher().getLat()), Double.parseDouble(UserInfoHolder.getInstance().getTeacher().getLng()));
+                circleTLocation = map.addCircle(new CircleOptions()
+                        .center(latLngT)
+                        .radius(0.5d)
+                        .strokeWidth(0.5f)
+                        .zIndex(1.0f)
+                        .fillColor(Color.RED));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngT, 25));
             }
         }
     }

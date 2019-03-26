@@ -16,4 +16,10 @@
         android:title="Teachers"
         android:visible="true" />
 
+    <item
+        android:id="@+id/view_path"
+        android:title="Path"
+        android:visible="true" />
+
+
 </menu>

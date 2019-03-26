@@ -26,15 +26,18 @@ public class LoginActivity extends AppCompatActivity implements OnLoginListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        txtPassword = (EditText)findViewById(R.id.txtPassword);
-        txtUsername = (EditText)findViewById(R.id.txtUsername);
-
+        txtPassword = (EditText) findViewById(R.id.txtPassword);
+        txtUsername = (EditText) findViewById(R.id.txtUsername);
 
         findViewById(R.id.btnLogin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    init();
+                    if (validate())
+                        init();
+                    else
+                        Toast.makeText(LoginActivity.this, "Enter username and password", Toast.LENGTH_LONG).show();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -53,8 +56,15 @@ public class LoginActivity extends AppCompatActivity implements OnLoginListener 
     }
 
 
-    private void notifyUser() {
+    private boolean validate() {
+        if (txtUsername.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 
+
+    private void notifyUser() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Login")
                 .setMessage("Login Successful, You are agree to share your current location")
@@ -62,13 +72,13 @@ public class LoginActivity extends AppCompatActivity implements OnLoginListener 
                 .setPositiveButton("Agree", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        setResult(RESULT_OK, intent);
                         finish();
                     }
                 });
-
         AlertDialog alert = builder.create();
         alert.show();
-
     }
 
     private void init() throws JSONException {
@@ -84,6 +94,7 @@ public class LoginActivity extends AppCompatActivity implements OnLoginListener 
 
     @Override
     public void onLoginSuccess(Teacher result) {
+        progressDialogUtil.hide();
         if (null != result) {
             UserInfoHolder.getInstance().setTeacher(result);
             notifyUser();
@@ -91,6 +102,5 @@ public class LoginActivity extends AppCompatActivity implements OnLoginListener 
             Toast.makeText(this, "Please enter valid username or password", Toast.LENGTH_LONG).show();
         }
     }
-
 
 }
