@@ -198,13 +198,14 @@ public class DrawBuildingActivity
                             circle.remove();
                         }
                         walking = walking + 1;
-                        LatLng latLntN = new LatLng(routeLatLnt.get(position).latitude, routeLatLnt.get(position).longitude);
+                        LatLng latLntN = new LatLng(routeLatLnt.get(walking).latitude, routeLatLnt.get(walking).longitude);
                         circle = map.addCircle(new CircleOptions()
                                 .center(latLntN)
                                 .radius(1d)
                                 .strokeWidth(1f)
                                 .zIndex(1.0f)
                                 .fillColor(Color.RED));
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLntN, 30));
                     } while (walking <= routeLatLnt.size());
                 }
                 break;
