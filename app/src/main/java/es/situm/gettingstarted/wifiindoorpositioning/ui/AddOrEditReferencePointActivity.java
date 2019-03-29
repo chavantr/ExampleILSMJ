@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -39,9 +38,6 @@ import es.situm.gettingstarted.wifiindoorpositioning.model.ReferencePoint;
 import es.situm.gettingstarted.wifiindoorpositioning.utils.AppContants;
 import es.situm.gettingstarted.wifiindoorpositioning.utils.Utils;
 
-/**
- * Created by suyashg on 07/09/17.
- */
 
 public class AddOrEditReferencePointActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -93,7 +89,7 @@ public class AddOrEditReferencePointActivity extends AppCompatActivity implement
                 this.finish();
             }
             RealmList<AccessPoint> readings = referencePointFromDB.getReadings();
-            for (AccessPoint ap:readings) {
+            for (AccessPoint ap : readings) {
                 readingsAdapter.addAP(ap);
             }
             readingsAdapter.notifyDataSetChanged();
@@ -114,7 +110,7 @@ public class AddOrEditReferencePointActivity extends AppCompatActivity implement
                 Toast.makeText(this, "No Access Points Found", Toast.LENGTH_SHORT).show();
             }
             if (!Utils.isLocationEnabled(this)) {
-                Toast.makeText(this,"Please turn on the location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please turn on the location", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -159,11 +155,11 @@ public class AddOrEditReferencePointActivity extends AppCompatActivity implement
         isCaliberating = false;
         Log.v(TAG, "caliberationCompleted");
         Map<String, List<Integer>> values = readings;
-        Log.v(TAG, "values:"+values.toString());
+        Log.v(TAG, "values:" + values.toString());
         for (Map.Entry<String, List<Integer>> entry : values.entrySet()) {
             List<Integer> readingsOfAMac = entry.getValue();
             Double mean = calculateMeanValue(readingsOfAMac);
-            Log.v(TAG, "entry.Key:"+entry.getKey()+" aps:"+aps);
+            Log.v(TAG, "entry.Key:" + entry.getKey() + " aps:" + aps);
             AccessPoint accessPoint = aps.get(entry.getKey());
             AccessPoint updatedPoint = new AccessPoint(accessPoint);
             updatedPoint.setMeanRss(mean);
@@ -240,14 +236,14 @@ public class AddOrEditReferencePointActivity extends AppCompatActivity implement
             }
 
             realm.commitTransaction();
-            Toast.makeText(this,"Reference Point Added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Reference Point Added", Toast.LENGTH_SHORT).show();
             this.finish();
         } else if (view.getId() == bnRpSave.getId() && isEdit) {
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
             referencePointFromDB = setValues(referencePointFromDB);
             realm.commitTransaction();
-            Toast.makeText(this,"Reference Point Updated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Reference Point Updated", Toast.LENGTH_SHORT).show();
             this.finish();
         }
     }
@@ -291,7 +287,7 @@ public class AddOrEditReferencePointActivity extends AppCompatActivity implement
             }
 //            results.put(Calendar.getInstance(), map);
 
-            Log.v(TAG, "Count:" + readingsCount+" scanResult:"+ scanResults.toString()+" aps:"+aps.toString());
+            Log.v(TAG, "Count:" + readingsCount + " scanResult:" + scanResults.toString() + " aps:" + aps.toString());
             for (int i = 0; i < readingsCount; ++i) {
 //                Log.v(TAG, "  BSSID       =" + results.get(i).BSSID);
 //                Log.v(TAG, "  SSID        =" + results.get(i).SSID);

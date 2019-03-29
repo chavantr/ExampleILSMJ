@@ -192,27 +192,34 @@ public class DrawBuildingActivity
                 break;
             }
             case DetectedActivity.WALKING: {
-                if (null != routeLatLnt && !routeLatLnt.isEmpty()) {
-                    do {
-                        if (null != circle) {
-                            circle.remove();
-                        }
-                        walking = walking + 1;
-                        LatLng latLntN = new LatLng(routeLatLnt.get(walking).latitude, routeLatLnt.get(walking).longitude);
-                        circle = map.addCircle(new CircleOptions()
-                                .center(latLntN)
-                                .radius(1d)
-                                .strokeWidth(1f)
-                                .zIndex(1.0f)
-                                .fillColor(Color.RED));
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLntN, 30));
-                    } while (walking <= routeLatLnt.size());
-                }
+                calculateProbability();
                 break;
             }
             case DetectedActivity.UNKNOWN: {
                 break;
             }
+        }
+    }
+
+    private void calculateProbability() {
+        if (null != routeLatLnt && !routeLatLnt.isEmpty()) {
+            if (walking > routeLatLnt.size()) {
+                stopTracking();
+            }
+            do {
+                if (null != circle) {
+                    circle.remove();
+                }
+                walking = walking + 1;
+                LatLng latLntN = new LatLng(routeLatLnt.get(walking).latitude, routeLatLnt.get(walking).longitude);
+                circle = map.addCircle(new CircleOptions()
+                        .center(latLntN)
+                        .radius(1d)
+                        .strokeWidth(1f)
+                        .zIndex(1.0f)
+                        .fillColor(Color.RED));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLntN, 30));
+            } while (walking <= routeLatLnt.size());
         }
     }
 
