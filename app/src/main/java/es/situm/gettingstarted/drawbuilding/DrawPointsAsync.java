@@ -2,11 +2,7 @@ package es.situm.gettingstarted.drawbuilding;
 
 import android.os.AsyncTask;
 
-import cz.msebera.android.httpclient.protocol.HTTP;
 
-/**
- * Created by Tatyabhau on 3/10/2018.
- */
 
 public class DrawPointsAsync extends AsyncTask<String, Void, String> {
 

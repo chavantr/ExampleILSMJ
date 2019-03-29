@@ -13,7 +13,7 @@ public class GetCurrentLocationAsync extends AsyncTask<Void, Void, LatLng> {
 
     @Override
     protected LatLng doInBackground(Void... params) {
-        String response = new HttpConnectionUtil().requestGet(IndoorConstants.URL + IndoorConstants.GET_CU_LOCATION);
+        String response = new HttpConnectionUtil().requestGet(IndoorConstants.URL + IndoorConstants.GET_ACCESS_POINT);
         if (response.isEmpty()) return null;
         else {
             JSONObject jResponse = null;

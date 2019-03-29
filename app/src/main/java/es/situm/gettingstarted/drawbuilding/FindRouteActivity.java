@@ -37,6 +37,7 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
 
     private List<String> lstSource;
     private List<String> lstDesti;
+    private ProgressDialogUtil progressDialogUtil;
 
     private GettingStartedApplication gettingStartedApplication;
 
@@ -48,13 +49,9 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
         findRoute = (Button) findViewById(R.id.findRoute);
 
 
+        progressDialogUtil = new ProgressDialogUtil(this);
+
         gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
-
-        /*lstSource = new ArrayList<>();
-        lstDesti = new ArrayList<>();
-        lstSource.add("HODCabin");
-        lstDesti.add("Staffroom");*/
-
         findRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,18 +67,9 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
         spnSourceLocation = (Spinner) findViewById(R.id.spnStartLocation);
         spnDestinationLocation = (Spinner) findViewById(R.id.spnDestLocation);
 
+        progressDialogUtil.show();
         GetRoutePointsAsync getRoutePointsAsync = new GetRoutePointsAsync();
         getRoutePointsAsync.setOnResultListener(this, IndoorConstants.URL + IndoorConstants.GET_ROUTE_POINTS);
-
-        /*ArrayAdapter<String> adapterSource = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, lstSource);
-
-        ArrayAdapter<String> adapterDest = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, lstDesti);
-
-        spnSourceLocation.setAdapter(adapterSource);
-
-        spnDestinationLocation.setAdapter(adapterDest);*/
 
     }
 
@@ -140,7 +128,7 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
 
     @Override
     public void onSuccessPoint(String result) {
-
+        progressDialogUtil.hide();
         if (!TextUtils.isEmpty(result)) {
             try {
                 JSONObject jPoints = new JSONObject(result);
@@ -164,8 +152,12 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
                 ArrayAdapter<String> adapterSource = new ArrayAdapter<String>(this,
                         android.R.layout.simple_spinner_item, lstSource);
 
+                adapterSource.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
                 ArrayAdapter<String> adapterDest = new ArrayAdapter<String>(this,
                         android.R.layout.simple_spinner_item, lstDesti);
+
+                adapterDest.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
 
                 spnSourceLocation.setAdapter(adapterSource);
 

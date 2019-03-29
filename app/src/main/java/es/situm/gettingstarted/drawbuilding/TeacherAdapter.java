@@ -13,7 +13,7 @@ import es.situm.gettingstarted.R;
 public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.TeacherViewHolder> {
 
     private List<Teacher> lstTeachers;
-
+    private OnTeacherLocationSelectedListener onTeacherLocationSelectedListener;
 
     public TeacherAdapter(List<Teacher> teachers) {
         this.lstTeachers = teachers;
@@ -25,13 +25,23 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.TeacherV
     }
 
     @Override
-    public void onBindViewHolder(TeacherViewHolder viewHolder, int position) {
+    public void onBindViewHolder(TeacherViewHolder viewHolder, final int position) {
         viewHolder.lblName.setText(lstTeachers.get(position).getName());
+        viewHolder.lblName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTeacherLocationSelectedListener.onTeacherLocation(lstTeachers.get(position));
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return lstTeachers.size();
+    }
+
+    public void setOnTeacherLocationSelectedListener(OnTeacherLocationSelectedListener onTeacherLocationSelectedListener) {
+        this.onTeacherLocationSelectedListener = onTeacherLocationSelectedListener;
     }
 
     class TeacherViewHolder extends RecyclerView.ViewHolder {

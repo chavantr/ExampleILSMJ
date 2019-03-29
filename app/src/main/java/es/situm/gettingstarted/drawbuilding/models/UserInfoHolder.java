@@ -1,5 +1,7 @@
 package es.situm.gettingstarted.drawbuilding.models;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import es.situm.gettingstarted.drawbuilding.Teacher;
 
 public class UserInfoHolder {
@@ -9,6 +11,7 @@ public class UserInfoHolder {
 
     private Teacher teacher;
 
+    private LatLng teacherLocation;
 
     public static UserInfoHolder getInstance() {
         return UserInfoHolderHelper.INSTANCE;
@@ -28,6 +31,14 @@ public class UserInfoHolder {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    public LatLng getTeacherLocation() {
+        return teacherLocation;
+    }
+
+    public void setTeacherLocation(LatLng teacherLocation) {
+        this.teacherLocation = teacherLocation;
     }
 
 

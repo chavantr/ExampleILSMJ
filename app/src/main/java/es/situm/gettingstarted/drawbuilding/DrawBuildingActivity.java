@@ -71,9 +71,9 @@ import es.situm.sdk.utils.Handler;
 
 public class DrawBuildingActivity
         extends AppCompatActivity
-        implements OnMapReadyCallback, OnResultListener {
+        implements OnMapReadyCallback, OnResultListener, OnGetCurrentLocationListener {
 
-
+    private static final int SELECT_TEACHER_LOCATION = 764;
     private GoogleMap map;
     private ProgressBar progressBar;
     private GetBuildingImageUseCase getBuildingImageUseCase = new GetBuildingImageUseCase();
@@ -87,17 +87,18 @@ public class DrawBuildingActivity
     private static final int FIND_ROUTE = 779;
     private static final int TEACHER_LOGIN = 799;
     private Polyline polyLine;
+    private ProgressDialogUtil progressDialogUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_building);
         setup();
+        progressDialogUtil = new ProgressDialogUtil(this);
         findRoute = (Button) findViewById(R.id.btnFindRoute);
         findRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(DrawBuildingActivity.this, FindRouteActivity.class);
                 startActivityForResult(intent, FIND_ROUTE);
             }
@@ -107,10 +108,9 @@ public class DrawBuildingActivity
         mapFragment.getMapAsync(this);
         setup(0);
 
-
-// The minimum time (in miliseconds) the system will wait until checking if the location changed
+        // The minimum time (in miliseconds) the system will wait until checking if the location changed
         int minTime = 60000;
-// The minimum distance (in meters) traveled until you will be notified
+        // The minimum distance (in meters) traveled until you will be notified
         float minDistance = 15;
 // Create a new instance of the location listener
         MyLocationListener myLocListener = new MyLocationListener();
@@ -144,6 +144,23 @@ public class DrawBuildingActivity
 
 
     private Location lastLocation;
+
+    @Override
+    public void onGetCurrentLocationSuccess(LatLng location) {
+
+        progressDialogUtil.hide();
+
+        circle = map.addCircle(new CircleOptions()
+                .center(location)
+                .radius(1d)
+                .strokeWidth(1f)
+                .zIndex(1.0f)
+                .fillColor(Color.RED));
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 30));
+
+
+    }
 
     private class MyLocationListener implements android.location.LocationListener {
 
@@ -281,7 +298,7 @@ public class DrawBuildingActivity
             return true;
         } else if (id == R.id.view_teacher) {
             Intent intent = new Intent(DrawBuildingActivity.this, ShowTeacherActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, SELECT_TEACHER_LOCATION);
             return true;
         } else if (id == R.id.view_path) {
             Intent intent = new Intent(DrawBuildingActivity.this, RealTimeActivity.class);
@@ -473,6 +490,13 @@ public class DrawBuildingActivity
     }
 
 
+    private void init() {
+        progressDialogUtil.show();
+        GetCurrentLocationAsync getCurrentLocationAsync = new GetCurrentLocationAsync();
+        getCurrentLocationAsync.setOnGetCurrentLocationListener(this);
+    }
+
+
     private void stopLocation() {
         if (!locationManager.isRunning()) {
             return;
@@ -490,6 +514,7 @@ public class DrawBuildingActivity
                             "Its mandatory to have at least two pois in a building: " + building.getName() + " to start directions manager",
                             Toast.LENGTH_LONG)
                             .show();
+
                 } else {
                     Iterator<Poi> iterator = pois.iterator();
                     final Point from = iterator.next().getPosition();
@@ -550,14 +575,16 @@ public class DrawBuildingActivity
                     for (int i = 0; i < jsonArrayPoints.length(); i++) {
                         JSONObject jPoint = jsonArrayPoints.getJSONObject(i);
                         LatLng latLng = new LatLng(Double.parseDouble(jPoint.getString("Latitude")), Double.parseDouble(jPoint.getString("Longitude")));
-                        map.addMarker(new MarkerOptions().position(latLng)
-                                .title(jPoint.getString("Name")));
+                        //map.addMarker(new MarkerOptions().position(latLng)
+                        //        .title(jPoint.getString("Name")));
                     }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
+        init();
     }
 
 
@@ -566,42 +593,26 @@ public class DrawBuildingActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == FIND_ROUTE) {
-
                 counter = 0;
-
-
                 position = 0;
-
-
                 GettingStartedApplication gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
                 if (null != gettingStartedApplication && gettingStartedApplication.getRouteResponse() != null) {
                     List<LatLng> route = new ArrayList<>();
-
                     if (null != polyLine) {
                         polyLine.remove();
                     }
-
-
                     if (null != gettingStartedApplication.getRouteResponse().getRoute()) {
                         route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude())));
                         LatLng latLng = new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getsLongitude()));
-                        // if (circle == null) {
-
                         if (null != circle) {
                             circle.remove();
                         }
-
                         circle = map.addCircle(new CircleOptions()
                                 .center(latLng)
                                 .radius(1d)
                                 .strokeWidth(1f)
                                 .zIndex(1.0f)
                                 .fillColor(Color.RED));
-                        // } else {
-                        //    circle.setCenter(latLng);
-                        // }
-
-                        //startLocation();
 
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25));
                         if (null != gettingStartedApplication.getRouteResponse().getRouteTrans() && gettingStartedApplication.getRouteResponse().getRouteTrans().size() > 0) {

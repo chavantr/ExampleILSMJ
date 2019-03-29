@@ -7,9 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-/**
- * Created by Tatyabhau on 3/11/2018.
- */
+
 
 public class FindRouteAsync extends AsyncTask<String, Void, String> {
 
