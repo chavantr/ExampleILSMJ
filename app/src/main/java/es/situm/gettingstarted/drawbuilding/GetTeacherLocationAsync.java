@@ -29,6 +29,12 @@ public class GetTeacherLocationAsync extends AsyncTask<JSONObject, Void, LatLng>
         return null;
     }
 
+    @Override
+    protected void onPostExecute(LatLng latLng) {
+        super.onPostExecute(latLng);
+        onGetTeacherLocationListener.onSuccessLocation(latLng);
+    }
+
     public void setOnGetTeacherLocationListener(OnGetTeacherLocationListener onGetTeacherLocationListener, JSONObject request) {
         this.onGetTeacherLocationListener = onGetTeacherLocationListener;
         super.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);

@@ -1,8 +1,10 @@
 package es.situm.gettingstarted.drawbuilding;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -12,8 +14,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +25,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -47,6 +52,8 @@ import java.util.List;
 import es.situm.gettingstarted.GettingStartedApplication;
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.drawbuilding.models.UserInfoHolder;
+import es.situm.gettingstarted.drawbuilding.router.BackgroundDetectedActivitiesService;
+import es.situm.gettingstarted.drawbuilding.router.RouterConstants;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
 import es.situm.gettingstarted.realtime.RealTimeActivity;
 import es.situm.gettingstarted.wifiindoorpositioning.ui.HomeActivity;
@@ -83,11 +90,14 @@ public class DrawBuildingActivity
     private LocationListener locationListener;
     private Circle circle;
     private Circle circleTLocation;
+    private Circle circleTCLocation;
     private Button findRoute;
+    private int walking = -1;
     private static final int FIND_ROUTE = 779;
     private static final int TEACHER_LOGIN = 799;
     private Polyline polyLine;
     private ProgressDialogUtil progressDialogUtil;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +106,7 @@ public class DrawBuildingActivity
         setup();
         progressDialogUtil = new ProgressDialogUtil(this);
         findRoute = (Button) findViewById(R.id.btnFindRoute);
+
         findRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,20 +114,20 @@ public class DrawBuildingActivity
                 startActivityForResult(intent, FIND_ROUTE);
             }
         });
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         setup(0);
 
-        // The minimum time (in miliseconds) the system will wait until checking if the location changed
         int minTime = 60000;
         // The minimum distance (in meters) traveled until you will be notified
         float minDistance = 15;
-// Create a new instance of the location listener
+
         MyLocationListener myLocListener = new MyLocationListener();
-// Get the location manager from the system
+
         android.location.LocationManager locationManagerL = (android.location.LocationManager) getSystemService(Context.LOCATION_SERVICE);
-// Get the criteria you would like to use
+
         Criteria criteria = new Criteria();
         criteria.setPowerRequirement(Criteria.POWER_HIGH);
         criteria.setAccuracy(Criteria.ACCURACY_COARSE);
@@ -124,6 +135,18 @@ public class DrawBuildingActivity
         criteria.setBearingRequired(false);
         criteria.setCostAllowed(true);
         criteria.setSpeedRequired(true);
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(RouterConstants.BROADCAST_DETECTED_ACTIVITY)) {
+                    int type = intent.getIntExtra("type", -1);
+                    int confidence = intent.getIntExtra("confidence", 0);
+                    handleUserActivity(type, confidence);
+                }
+            }
+        };
+
 // Get the best provider from the criteria specified, and false to say it can turn the provider on if it isn't already
         String bestProvider = locationManagerL.getBestProvider(criteria, false);
 // Request location updates
@@ -145,21 +168,67 @@ public class DrawBuildingActivity
 
     private Location lastLocation;
 
+    private void handleUserActivity(int type, int confidence) {
+
+        Log.d("test", "test" + type);
+
+        switch (type) {
+            case DetectedActivity.IN_VEHICLE: {
+                break;
+            }
+            case DetectedActivity.ON_BICYCLE: {
+                break;
+            }
+            case DetectedActivity.ON_FOOT: {
+                break;
+            }
+            case DetectedActivity.RUNNING: {
+                break;
+            }
+            case DetectedActivity.STILL: {
+                break;
+            }
+            case DetectedActivity.TILTING: {
+                break;
+            }
+            case DetectedActivity.WALKING: {
+                if (null != routeLatLnt && !routeLatLnt.isEmpty()) {
+                    do {
+                        if (null != circle) {
+                            circle.remove();
+                        }
+                        walking = walking + 1;
+                        LatLng latLntN = new LatLng(routeLatLnt.get(position).latitude, routeLatLnt.get(position).longitude);
+                        circle = map.addCircle(new CircleOptions()
+                                .center(latLntN)
+                                .radius(1d)
+                                .strokeWidth(1f)
+                                .zIndex(1.0f)
+                                .fillColor(Color.RED));
+                    } while (walking <= routeLatLnt.size());
+                }
+                break;
+            }
+            case DetectedActivity.UNKNOWN: {
+                break;
+            }
+        }
+
+        if (confidence > RouterConstants.CONFIDENCE) {
+
+        }
+    }
+
     @Override
     public void onGetCurrentLocationSuccess(LatLng location) {
-
         progressDialogUtil.hide();
-
         circle = map.addCircle(new CircleOptions()
                 .center(location)
                 .radius(1d)
                 .strokeWidth(1f)
                 .zIndex(1.0f)
                 .fillColor(Color.RED));
-
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 30));
-
-
     }
 
     private class MyLocationListener implements android.location.LocationListener {
@@ -196,14 +265,10 @@ public class DrawBuildingActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         checkPermissions();
-
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-
         map = googleMap;
-
         getBuildingImageUseCase.get(new GetBuildingImageUseCase.Callback() {
             @Override
             public void onSuccess(Building building, Bitmap bitmap) {
@@ -216,15 +281,11 @@ public class DrawBuildingActivity
                 Toast.makeText(DrawBuildingActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-
-
     }
-
 
     private void setup() {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
-
 
     void drawBuilding(Building building, Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
@@ -240,7 +301,6 @@ public class DrawBuildingActivity
                 .positionFromBounds(latLngBounds));
 
         initPoints();
-
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 15));
     }
 
@@ -261,8 +321,6 @@ public class DrawBuildingActivity
                                 .title(poi.getName()));
                         builder.include(latLng);
                     }
-
-
                 }
             }
 
@@ -275,7 +333,6 @@ public class DrawBuildingActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
@@ -286,7 +343,6 @@ public class DrawBuildingActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.setting) {
             Intent intent = new Intent(DrawBuildingActivity.this, HomeActivity.class);
@@ -305,7 +361,6 @@ public class DrawBuildingActivity
             startActivity(intent);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -325,7 +380,7 @@ public class DrawBuildingActivity
                 requestPermission();
             }
         } else {
-            startLocation();
+            //startLocation();
         }
     }
 
@@ -509,12 +564,10 @@ public class DrawBuildingActivity
             @Override
             public void onSuccess(Building building, Collection<Poi> pois) {
                 if (pois.size() < 2) {
-
                     Toast.makeText(DrawBuildingActivity.this,
                             "Its mandatory to have at least two pois in a building: " + building.getName() + " to start directions manager",
                             Toast.LENGTH_LONG)
                             .show();
-
                 } else {
                     Iterator<Poi> iterator = pois.iterator();
                     final Point from = iterator.next().getPosition();
@@ -543,7 +596,6 @@ public class DrawBuildingActivity
 
                         @Override
                         public void onFailure(Error error) {
-                            // hideProgress();
                             Toast.makeText(DrawBuildingActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
@@ -552,19 +604,15 @@ public class DrawBuildingActivity
 
             @Override
             public void onError(String error) {
-                //hideProgress();
                 Toast.makeText(DrawBuildingActivity.this, error, Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void initPoints() {
-
         DrawPointsAsync drawPointsAsync = new DrawPointsAsync();
         drawPointsAsync.setOnResultListener(this, IndoorConstants.URL + IndoorConstants.GET_POINTS);
-
     }
-
 
     @Override
     public void onSuccess(String result) {
@@ -583,14 +631,13 @@ public class DrawBuildingActivity
                 e.printStackTrace();
             }
         }
-
         init();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        walking = -1;
         if (resultCode == RESULT_OK) {
             if (requestCode == FIND_ROUTE) {
                 counter = 0;
@@ -613,7 +660,6 @@ public class DrawBuildingActivity
                                 .strokeWidth(1f)
                                 .zIndex(1.0f)
                                 .fillColor(Color.RED));
-
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25));
                         if (null != gettingStartedApplication.getRouteResponse().getRouteTrans() && gettingStartedApplication.getRouteResponse().getRouteTrans().size() > 0) {
                             for (int i = 0; i < gettingStartedApplication.getRouteResponse().getRouteTrans().size(); i++) {
@@ -622,12 +668,11 @@ public class DrawBuildingActivity
                         }
                         route.add(new LatLng(Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLatitude()), Double.parseDouble(gettingStartedApplication.getRouteResponse().getRoute().getdLongitude())));
                         polyLine = map.addPolyline(new PolylineOptions().addAll(route).color(Color.BLUE).width(7));
-
                         routeLatLnt = route;
+                        startTracking();
                     }
                 }
             } else if (requestCode == TEACHER_LOGIN) {
-
                 if (null != circleTLocation) {
                     circleTLocation.remove();
                 }
@@ -639,8 +684,43 @@ public class DrawBuildingActivity
                         .zIndex(1.0f)
                         .fillColor(Color.RED));
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngT, 25));
+            } else if (requestCode == SELECT_TEACHER_LOCATION) {
+                if (null != circleTCLocation) {
+                    circleTCLocation.remove();
+                }
+                LatLng latLngT = UserInfoHolder.getInstance().getTeacherLocation();
+                circleTCLocation = map.addCircle(new CircleOptions()
+                        .center(latLngT)
+                        .radius(0.5d)
+                        .strokeWidth(0.5f)
+                        .zIndex(1.0f)
+                        .fillColor(Color.RED));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngT, 35));
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
+                new IntentFilter(RouterConstants.BROADCAST_DETECTED_ACTIVITY));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+    }
+
+    private void startTracking() {
+        Intent intent = new Intent(DrawBuildingActivity.this, BackgroundDetectedActivitiesService.class);
+        startService(intent);
+    }
+
+    private void stopTracking() {
+        Intent intent = new Intent(DrawBuildingActivity.this, BackgroundDetectedActivitiesService.class);
+        stopService(intent);
     }
 
     private int position;

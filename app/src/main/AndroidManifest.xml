@@ -3,6 +3,9 @@
     package="es.situm.gettingstarted">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
+
     <uses-permission
         android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="true" />
@@ -15,6 +18,8 @@
     <uses-permission
         android:name="android.permission.ACCESS_COARSE_LOCATION"
         android:required="true" />
+
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:name=".GettingStartedApplication"
@@ -135,6 +140,13 @@
         <service android:name=".wifiindoorpositioning.core.WifiService" />
 
         <activity android:name=".drawbuilding.TeacherAgreementActivity" />
+
+        <service
+            android:name=".drawbuilding.router.DetectedActivitiesIntentService"
+            android:exported="false" />
+
+        <service android:name=".drawbuilding.router.BackgroundDetectedActivitiesService"></service>
+
     </application>
 
 </manifest>

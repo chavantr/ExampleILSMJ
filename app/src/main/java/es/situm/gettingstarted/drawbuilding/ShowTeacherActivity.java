@@ -58,6 +58,7 @@ public class ShowTeacherActivity extends AppCompatActivity implements OnGetTeach
     public void onGetTeacherSuccess(List<Teacher> result) {
         progressDialogUtil.hide();
         teacherAdapter = new TeacherAdapter(result);
+        teacherAdapter.setOnTeacherLocationSelectedListener(this);
         lstTeachers.setAdapter(teacherAdapter);
     }
 
