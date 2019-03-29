@@ -214,10 +214,6 @@ public class DrawBuildingActivity
                 break;
             }
         }
-
-        if (confidence > RouterConstants.CONFIDENCE) {
-
-        }
     }
 
     @Override
