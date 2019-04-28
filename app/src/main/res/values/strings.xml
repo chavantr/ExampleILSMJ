@@ -20,6 +20,7 @@
 
     <string name="enter_designation">Enter designation</string>
     <string name="enter_qualification">Enter qualification</string>
+    <string name="enter_phoner_number">Enter phoner number</string>
 
     <string-array name="algoNames">
 

@@ -13,6 +13,8 @@ public class UserInfoHolder {
 
     private LatLng teacherLocation;
 
+    private Teacher selectedTeacher;
+
     public static UserInfoHolder getInstance() {
         return UserInfoHolderHelper.INSTANCE;
     }
@@ -39,6 +41,14 @@ public class UserInfoHolder {
 
     public void setTeacherLocation(LatLng teacherLocation) {
         this.teacherLocation = teacherLocation;
+    }
+
+    public Teacher getSelectedTeacher() {
+        return selectedTeacher;
+    }
+
+    public void setSelectedTeacher(Teacher selectedTeacher) {
+        this.selectedTeacher = selectedTeacher;
     }
 
 

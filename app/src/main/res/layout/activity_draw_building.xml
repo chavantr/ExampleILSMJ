@@ -9,17 +9,28 @@
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         android:layout_margin="4dp" />
 
 
     <Button
         android:id="@+id/btnFindRoute"
         android:layout_width="match_parent"
-        android:layout_margin="7dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/find_route" />
+        android:layout_margin="7dp"
+        android:text="@string/find_route"
+        android:visibility="invisible" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:id="@+id/fFindFoute"
+        android:src="@drawable/ic_navigation_black_24dp" />
+
 
 </RelativeLayout>

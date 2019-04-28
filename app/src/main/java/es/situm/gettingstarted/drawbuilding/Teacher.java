@@ -18,6 +18,7 @@ public class Teacher {
 
     private String lng;
 
+    private String phoneNumber;
 
     public int getId() {
         return id;
@@ -81,5 +82,13 @@ public class Teacher {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

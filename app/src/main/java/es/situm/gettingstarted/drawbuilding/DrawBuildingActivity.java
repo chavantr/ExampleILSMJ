@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -30,12 +34,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -98,6 +104,8 @@ public class DrawBuildingActivity
     private Polyline polyLine;
     private ProgressDialogUtil progressDialogUtil;
     private BroadcastReceiver broadcastReceiver;
+    private FloatingActionButton fFindRoute;
+    private Marker teacherLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +114,18 @@ public class DrawBuildingActivity
         setup();
         progressDialogUtil = new ProgressDialogUtil(this);
         findRoute = (Button) findViewById(R.id.btnFindRoute);
+        fFindRoute = (FloatingActionButton) findViewById(R.id.fFindFoute);
+
 
         findRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DrawBuildingActivity.this, FindRouteActivity.class);
+                startActivityForResult(intent, FIND_ROUTE);
+            }
+        });
+
+        fFindRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DrawBuildingActivity.this, FindRouteActivity.class);
@@ -174,28 +192,38 @@ public class DrawBuildingActivity
 
         switch (type) {
             case DetectedActivity.IN_VEHICLE: {
+                //Toast.makeText(DrawBuildingActivity.this, "IN_VEHICLE", Toast.LENGTH_LONG).show();
                 break;
             }
             case DetectedActivity.ON_BICYCLE: {
+                //Toast.makeText(DrawBuildingActivity.this, "ON_BICYCLE", Toast.LENGTH_LONG).show();
                 break;
             }
             case DetectedActivity.ON_FOOT: {
+                //calculateProbability();
+                //Toast.makeText(DrawBuildingActivity.this, "ON_FOOT", Toast.LENGTH_LONG).show();
                 break;
             }
             case DetectedActivity.RUNNING: {
+                //Toast.makeText(DrawBuildingActivity.this, "RUNNING", Toast.LENGTH_LONG).show();
                 break;
             }
             case DetectedActivity.STILL: {
+                //calculateProbability();
+                //Toast.makeText(DrawBuildingActivity.this, "STILL", Toast.LENGTH_LONG).show();
                 break;
             }
             case DetectedActivity.TILTING: {
+                Toast.makeText(DrawBuildingActivity.this, "TILTING", Toast.LENGTH_LONG).show();
                 break;
             }
             case DetectedActivity.WALKING: {
+                //Toast.makeText(DrawBuildingActivity.this, "WALKING", Toast.LENGTH_LONG).show();
                 calculateProbability();
                 break;
             }
             case DetectedActivity.UNKNOWN: {
+                //Toast.makeText(DrawBuildingActivity.this, "UNKNOWN", Toast.LENGTH_LONG).show();
                 break;
             }
         }
@@ -203,10 +231,7 @@ public class DrawBuildingActivity
 
     private void calculateProbability() {
         if (null != routeLatLnt && !routeLatLnt.isEmpty()) {
-            if (walking > routeLatLnt.size()) {
-                stopTracking();
-            }
-            do {
+            if (walking < routeLatLnt.size() - 1) {
                 if (null != circle) {
                     circle.remove();
                 }
@@ -219,7 +244,7 @@ public class DrawBuildingActivity
                         .zIndex(1.0f)
                         .fillColor(Color.RED));
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLntN, 30));
-            } while (walking <= routeLatLnt.size());
+            }
         }
     }
 
@@ -239,7 +264,11 @@ public class DrawBuildingActivity
 
         @Override
         public void onLocationChanged(android.location.Location location) {
-
+            if (location.getSpeed() > 5) {
+                Toast.makeText(DrawBuildingActivity.this, "location changes with 5 speed", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(DrawBuildingActivity.this, "location changes with 0 speed", Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override
@@ -442,6 +471,8 @@ public class DrawBuildingActivity
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 progressBar.setVisibility(View.GONE);
+
+
                 LatLng latLng1 = new LatLng(location.getCoordinate().getLatitude(),
                         location.getCoordinate().getLongitude());
 
@@ -639,6 +670,11 @@ public class DrawBuildingActivity
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         walking = -1;
@@ -674,6 +710,7 @@ public class DrawBuildingActivity
                         polyLine = map.addPolyline(new PolylineOptions().addAll(route).color(Color.BLUE).width(7));
                         routeLatLnt = route;
                         startTracking();
+                        register();
                     }
                 }
             } else if (requestCode == TEACHER_LOGIN) {
@@ -689,24 +726,44 @@ public class DrawBuildingActivity
                         .fillColor(Color.RED));
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngT, 25));
             } else if (requestCode == SELECT_TEACHER_LOCATION) {
-                if (null != circleTCLocation) {
+               /* if (null != circleTCLocation) {
                     circleTCLocation.remove();
-                }
+                }*/
+                Teacher teacher = UserInfoHolder.getInstance().getSelectedTeacher();
                 LatLng latLngT = UserInfoHolder.getInstance().getTeacherLocation();
-                circleTCLocation = map.addCircle(new CircleOptions()
+                teacherLocation = map.addMarker(new MarkerOptions()
+                        .position(latLngT)
+                        .title(teacher.getName()).icon(bitmapDescriptorFromVector(this, R.drawable.ic_person_pin_black_24dp)));
+               /* circleTCLocation = map.addCircle(new CircleOptions()
                         .center(latLngT)
                         .radius(0.5d)
                         .strokeWidth(0.5f)
                         .zIndex(1.0f)
-                        .fillColor(Color.RED));
+                        .fillColor(Color.RED));*/
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngT, 35));
             }
         }
     }
 
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes int vectorDrawableResourceId) {
+        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_person_pin_black_24dp);
+        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
+        vectorDrawable.setBounds(40, 20, vectorDrawable.getIntrinsicWidth() + 40, vectorDrawable.getIntrinsicHeight() + 20);
+        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        background.draw(canvas);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        register();
+    }
+
+    private void register() {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
                 new IntentFilter(RouterConstants.BROADCAST_DETECTED_ACTIVITY));
     }
@@ -721,6 +778,7 @@ public class DrawBuildingActivity
         Intent intent = new Intent(DrawBuildingActivity.this, BackgroundDetectedActivitiesService.class);
         startService(intent);
     }
+
 
     private void stopTracking() {
         Intent intent = new Intent(DrawBuildingActivity.this, BackgroundDetectedActivitiesService.class);

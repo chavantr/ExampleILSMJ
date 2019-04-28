@@ -35,6 +35,7 @@ public class GetTeachersAsync extends AsyncTask<Void, Void, List<Teacher>> {
                         teacher.setDesignation(jNode.getString("Designation"));
                         teacher.setLat(jNode.getString("Lat"));
                         teacher.setLng(jNode.getString("Lng"));
+                        teacher.setPhoneNumber(jNode.getString("PNumber"));
                         lstTeacher.add(teacher);
                     }
                     return lstTeacher;

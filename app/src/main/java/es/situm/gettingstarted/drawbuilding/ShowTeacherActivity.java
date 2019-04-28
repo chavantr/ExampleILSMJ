@@ -50,6 +50,7 @@ public class ShowTeacherActivity extends AppCompatActivity implements OnGetTeach
         param.put("From", calendar.get(Calendar.HOUR_OF_DAY));
         param.put("To", calendar.get(Calendar.HOUR_OF_DAY) + 1);
         param.put("Id", teacher.getId());
+        param.put("Day", Calendar.DAY_OF_WEEK);
         jRequest.put("request", param);
         getTeacherLocationAsync.setOnGetTeacherLocationListener(this, jRequest);
     }
@@ -76,9 +77,10 @@ public class ShowTeacherActivity extends AppCompatActivity implements OnGetTeach
     @Override
     public void onTeacherLocation(Teacher teacher) {
         try {
-            if (null != teacher)
+            if (null != teacher) {
                 initL(teacher);
-            else
+                UserInfoHolder.getInstance().setSelectedTeacher(teacher);
+            } else
                 Toast.makeText(this, "Issue with connection in proxy", Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
             e.printStackTrace();
