@@ -12,6 +12,8 @@ public class GettingStartedApplication extends Application {
 
     private RouteResponse routeResponse;
 
+    private String scanDestination;
+
 
     @Override
     public void onCreate() {
@@ -31,4 +33,11 @@ public class GettingStartedApplication extends Application {
         this.routeResponse = routeResponse;
     }
 
+    public String getScanDestination() {
+        return scanDestination;
+    }
+
+    public void setScanDestination(String scanDestination) {
+        this.scanDestination = scanDestination;
+    }
 }

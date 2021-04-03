@@ -2,7 +2,8 @@ package es.situm.gettingstarted.drawbuilding;
 
 
 public class IndoorConstants {
-    public static final String URL = "http://192.168.43.157:8077/MyRestService.svc/";
+    public static final String URL = "http://globemindstechnologies.com/MyRestService.svc/";
+    //public static final String URL = "http://192.168.43.157:8077/MyRestService.svc/";
     public static final String GET_POINTS = "GetPoints";
     public static final String GET_ACCESS_POINTS = "GetAccessPoints";
     public static final String GET_ROUTES = "GetRoutes";
@@ -13,5 +14,4 @@ public class IndoorConstants {
     public static final String REGISTRATION = "Registration";
     public static final String GET_ACCESS_POINT = "GetAccessPoint";
     public static final String GET_TEACHER_CURRENT_LOCATION = "GetTeacherCurrentLocation";
-
 }

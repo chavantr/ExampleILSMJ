@@ -381,7 +381,7 @@ public class DrawBuildingActivity
             Intent intent = new Intent(DrawBuildingActivity.this, HomeActivity.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.teacher) {
+        } /*else if (id == R.id.teacher) {
             Intent intent = new Intent(DrawBuildingActivity.this, LoginActivity.class);
             startActivityForResult(intent, TEACHER_LOGIN);
             return true;
@@ -389,7 +389,7 @@ public class DrawBuildingActivity
             Intent intent = new Intent(DrawBuildingActivity.this, ShowTeacherActivity.class);
             startActivityForResult(intent, SELECT_TEACHER_LOCATION);
             return true;
-        } else if (id == R.id.view_path) {
+        }*/ else if (id == R.id.view_path) {
             Intent intent = new Intent(DrawBuildingActivity.this, RealTimeActivity.class);
             startActivity(intent);
             return true;
@@ -496,11 +496,7 @@ public class DrawBuildingActivity
                 counter = counter + 1;
 
                 if (counter < 25) {
-
-
                     if (null != routeLatLnt && position <= routeLatLnt.size()) {
-
-
                         if (counter >= 24) {
 
                             position = position + 1;
@@ -658,8 +654,8 @@ public class DrawBuildingActivity
                     for (int i = 0; i < jsonArrayPoints.length(); i++) {
                         JSONObject jPoint = jsonArrayPoints.getJSONObject(i);
                         LatLng latLng = new LatLng(Double.parseDouble(jPoint.getString("Latitude")), Double.parseDouble(jPoint.getString("Longitude")));
-                        //map.addMarker(new MarkerOptions().position(latLng)
-                        //        .title(jPoint.getString("Name")));
+                        map.addMarker(new MarkerOptions().position(latLng)
+                                .title(jPoint.getString("Name")));
                     }
                 }
             } catch (JSONException e) {

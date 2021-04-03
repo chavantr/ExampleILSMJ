@@ -14,9 +14,10 @@ public class GetCurrentLocationAsync extends AsyncTask<Void, Void, LatLng> {
     @Override
     protected LatLng doInBackground(Void... params) {
         String response = new HttpConnectionUtil().requestGet(IndoorConstants.URL + IndoorConstants.GET_ACCESS_POINT);
-        if (response.isEmpty()) return null;
-        else {
-            JSONObject jResponse = null;
+        if (response == null || response.isEmpty()) {
+            return new LatLng(18.500075, 73.970410);
+        } else {
+            JSONObject jResponse;
             try {
                 jResponse = new JSONObject(response);
                 LatLng latLng = new LatLng(Double.parseDouble(jResponse.getString("Latitude")), Double.parseDouble(jResponse.getString("Longitude")));
@@ -24,8 +25,8 @@ public class GetCurrentLocationAsync extends AsyncTask<Void, Void, LatLng> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return null;
         }
+        return null;
     }
 
     @Override

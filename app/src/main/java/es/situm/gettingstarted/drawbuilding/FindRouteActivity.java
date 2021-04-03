@@ -1,6 +1,11 @@
 package es.situm.gettingstarted.drawbuilding;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -33,44 +38,79 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
     public static final String LNG = "Lng";
     private Button findRoute;
     private Spinner spnSourceLocation;
+    private Spinner spnScanSourceLocation;
     private Spinner spnDestinationLocation;
 
     private List<String> lstSource;
     private List<String> lstDesti;
     private ProgressDialogUtil progressDialogUtil;
-
+    private String[] permissions = {Manifest.permission.CAMERA};
     private GettingStartedApplication gettingStartedApplication;
+    private Button btnScan;
+    private Button btnSearch;
+    private int EXTERNAL_REQUEST = 1001;
+    private int SCAN_CODE = 1002;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_route);
-        findRoute = (Button) findViewById(R.id.findRoute);
 
 
-        progressDialogUtil = new ProgressDialogUtil(this);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this, permissions,
+                    EXTERNAL_REQUEST);
+        } else {
 
-        gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
-        findRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!TextUtils.isEmpty(spnSourceLocation.getSelectedItem().toString()) && !TextUtils.isEmpty(spnDestinationLocation.getSelectedItem().toString())) {
-                    Toast.makeText(FindRouteActivity.this, "Loading routes", Toast.LENGTH_LONG).show();
-                    initFindRoute();
-                } else {
-                    Toast.makeText(FindRouteActivity.this, "Enter source and destination", Toast.LENGTH_LONG).show();
+            findRoute = (Button) findViewById(R.id.findRoute);
+
+            btnScan = (Button) findViewById(R.id.btnScan);
+
+            btnSearch = (Button) findViewById(R.id.btnSearch);
+
+            progressDialogUtil = new ProgressDialogUtil(this);
+
+            gettingStartedApplication = (GettingStartedApplication) getApplicationContext();
+            findRoute.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!TextUtils.isEmpty(spnSourceLocation.getSelectedItem().toString()) && !TextUtils.isEmpty(spnDestinationLocation.getSelectedItem().toString())) {
+                        Toast.makeText(FindRouteActivity.this, "Loading routes", Toast.LENGTH_LONG).show();
+                        initFindRoute(spnSourceLocation.getSelectedItem().toString(), spnDestinationLocation.getSelectedItem().toString());
+                    } else {
+                        Toast.makeText(FindRouteActivity.this, "Enter source and destination", Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
-        });
+            });
 
-        spnSourceLocation = (Spinner) findViewById(R.id.spnStartLocation);
-        spnDestinationLocation = (Spinner) findViewById(R.id.spnDestLocation);
+            btnSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!gettingStartedApplication.getScanDestination().isEmpty()) {
+                        Toast.makeText(FindRouteActivity.this, "Loading routes", Toast.LENGTH_LONG).show();
+                        initFindRoute(spnScanSourceLocation.getSelectedItem().toString(), gettingStartedApplication.getScanDestination());
+                    }
+                }
+            });
 
-        progressDialogUtil.show();
-        GetRoutePointsAsync getRoutePointsAsync = new GetRoutePointsAsync();
-        getRoutePointsAsync.setOnResultListener(this, IndoorConstants.URL + IndoorConstants.GET_ROUTE_POINTS);
+            btnScan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(FindRouteActivity.this, QRCodeScanActivity.class);
+                    startActivityForResult(intent, SCAN_CODE);
+                }
+            });
 
+            spnSourceLocation = (Spinner) findViewById(R.id.spnStartLocation);
+            spnScanSourceLocation = (Spinner) findViewById(R.id.spnScanStartLocation);
+            spnDestinationLocation = (Spinner) findViewById(R.id.spnDestLocation);
+
+            progressDialogUtil.show();
+            GetRoutePointsAsync getRoutePointsAsync = new GetRoutePointsAsync();
+            getRoutePointsAsync.setOnResultListener(this, IndoorConstants.URL + IndoorConstants.GET_ROUTE_POINTS);
+        }
     }
 
     @Override
@@ -121,9 +161,9 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
         }
     }
 
-    private void initFindRoute() {
+    private void initFindRoute(String source, String destination) {
         FindRouteAsync findRouteAsync = new FindRouteAsync();
-        findRouteAsync.setOnResultListener(this, "source=" + spnSourceLocation.getSelectedItem().toString() + "&desti=" + spnDestinationLocation.getSelectedItem().toString());
+        findRouteAsync.setOnResultListener(this, "source=" + source + "&desti=" + destination);
     }
 
     @Override
@@ -156,20 +196,25 @@ public class FindRouteActivity extends AppCompatActivity implements OnResultList
 
                 ArrayAdapter<String> adapterDest = new ArrayAdapter<String>(this,
                         android.R.layout.simple_spinner_item, lstDesti);
-
                 adapterDest.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-
                 spnSourceLocation.setAdapter(adapterSource);
-
+                spnScanSourceLocation.setAdapter(adapterSource);
                 spnDestinationLocation.setAdapter(adapterDest);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SCAN_CODE) {
 
 
+            }
+        }
     }
 }

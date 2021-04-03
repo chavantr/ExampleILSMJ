@@ -3,7 +3,9 @@
     package="es.situm.gettingstarted">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 
     <uses-permission
@@ -27,6 +29,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_config_setting"
         android:theme="@style/AppTheme">
         <activity android:name=".drawbuilding.ShowTeacherActivity"></activity>
         <activity android:name=".drawbuilding.LoginActivity" />
@@ -79,7 +82,14 @@
             android:name=".realtime.RealTimeActivity"
             android:label="Draw realtime"
             android:parentActivityName=".SamplesActivity"
-            android:screenOrientation="portrait" /> <!-- Google play services version -->
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".drawbuilding.QRCodeScanActivity"
+            android:label="Scan QR Code"
+            android:screenOrientation="portrait" />
+
+        <!-- Google play services version -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" /> <!-- Situm SDK credentials -->
@@ -93,22 +103,20 @@
             android:name="es.situm.sdk.API_KEY"
             android:value="ec4a6e7bb1ae189504307922b1eb35e742c4748b293ad53bf79d9dabc7077b01" />
         -->
-        <meta-data
+        <!--<meta-data
             android:name="es.situm.sdk.API_USER"
             android:value="tatyabhau.chavan@hotmail.com" />
         <meta-data
             android:name="es.situm.sdk.API_KEY"
-            android:value="327848a80392ae31fc10066fcb974fee5f678242ed35c23838743d36f39fc367" /> <!-- aissms -->
-        <!--
-                    <meta-data
-                    android:name="es.situm.sdk.API_USER"
-                    android:value="tatyabhau.chavan@gmail.com" />
+            android:value="327848a80392ae31fc10066fcb974fee5f678242ed35c23838743d36f39fc367" />--> <!-- aissms -->
+        <meta-data
+            android:name="es.situm.sdk.API_USER"
+            android:value="tatyabhau.chavan@gmail.com" />
 
 
-                <meta-data
-                    android:name="es.situm.sdk.API_KEY"
-                    android:value="30b0549892d1ee12743ceba40cc0c9b29b04881ff867df0d9f8cf7f87cb68ebf" />
-        -->
+        <meta-data
+            android:name="es.situm.sdk.API_KEY"
+            android:value="30b0549892d1ee12743ceba40cc0c9b29b04881ff867df0d9f8cf7f87cb68ebf" />
         <!-- GMaps api key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -6,15 +6,6 @@
         android:title="@string/wifi_points"
         android:visible="true" />
 
-    <item
-        android:id="@+id/teacher"
-        android:title="Teacher login"
-        android:visible="true" />
-
-    <item
-        android:id="@+id/view_teacher"
-        android:title="Teachers"
-        android:visible="true" />
 
     <item
         android:id="@+id/view_path"
