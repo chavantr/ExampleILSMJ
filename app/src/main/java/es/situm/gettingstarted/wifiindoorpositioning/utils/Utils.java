@@ -1,5 +1,4 @@
 package es.situm.gettingstarted.wifiindoorpositioning.utils;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
@@ -17,7 +16,6 @@ import es.situm.gettingstarted.wifiindoorpositioning.model.LocDistance;
 import es.situm.gettingstarted.wifiindoorpositioning.model.LocationWithNearbyPlaces;
 
 import static android.content.Context.LOCATION_SERVICE;
-
 
 public class Utils {
 

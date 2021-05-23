@@ -8,15 +8,11 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-
-
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
 import es.situm.gettingstarted.wifiindoorpositioning.model.WifiData;
 import es.situm.gettingstarted.wifiindoorpositioning.utils.AppContants;
 

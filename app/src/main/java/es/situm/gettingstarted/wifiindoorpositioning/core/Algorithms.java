@@ -537,5 +537,4 @@ public class Algorithms {
 		}
 		return parameter;
 	}
-
 }

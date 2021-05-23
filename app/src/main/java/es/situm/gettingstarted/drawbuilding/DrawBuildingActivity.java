@@ -695,7 +695,7 @@ public class DrawBuildingActivity
                                 .radius(1d)
                                 .strokeWidth(1f)
                                 .zIndex(1.0f)
-                                .fillColor(Color.RED));
+                                .fillColor(Color.GREEN));
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25));
                         if (null != gettingStartedApplication.getRouteResponse().getRouteTrans() && gettingStartedApplication.getRouteResponse().getRouteTrans().size() > 0) {
                             for (int i = 0; i < gettingStartedApplication.getRouteResponse().getRouteTrans().size(); i++) {
@@ -707,6 +707,9 @@ public class DrawBuildingActivity
                         routeLatLnt = route;
                         startTracking();
                         register();
+
+                        map.addMarker(new MarkerOptions().position(latLng)
+                                .title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
                     }
                 }
             } else if (requestCode == TEACHER_LOGIN) {
